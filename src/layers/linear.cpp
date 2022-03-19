@@ -8,14 +8,6 @@ Linear::Linear(int inputTensorShape, int outputTensorShape) {
     inputShape = inputTensorShape;
     outputShape = outputTensorShape;
 
-//    weightsMatrix = {{1, 1, 1, 1},
-//                     {2, 2, 2, 2},
-//                     {3, 3, 3, 3},
-//                     {4, 4, 4, 4},
-//                     {5, 5, 5, 5}};
-
-//    biases = {1, 1, 1, 1, 1};
-
     weightsMatrix = this->initializeWeights();
     biases = this->initializeBiases();
 }
@@ -25,7 +17,7 @@ std::vector<std::vector<double>> Linear::initializeWeights() const {
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution<> dis(-1.0, 1.0);
+    std::uniform_real_distribution<> dis(0.0, 1.0);
 
     for (int n = 0; n < this->outputShape; n++) {
         std::vector<double> rowVector;
@@ -63,7 +55,7 @@ std::vector<std::vector<double>> Linear::transposeMatrix(std::vector<std::vector
 
     for (int i = 0; i < matrixToTranspose[0].size(); i++) {
         std::vector<double> rowVector;
-        rowVector.reserve(matrixToTranspose.size());
+        rowVector.reserve(matrixToTranspose[0].size());
 
         for (auto &j: matrixToTranspose) {
             rowVector.push_back(j[i]);
@@ -98,4 +90,6 @@ std::vector<std::vector<double>> Linear::dotProduct(std::vector<std::vector<doub
 
     return transposeMatrix(outputMatrix);
 }
+
+Linear::~Linear() = default;
 
