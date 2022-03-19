@@ -1,1 +1,1 @@
-# Neural Network implementation from scratch in C++
+# Neural Networks implementation from scratch in C++
