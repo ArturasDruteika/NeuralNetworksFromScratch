@@ -13,6 +13,8 @@ void printMatrixContent(std::vector<std::vector<double>> inputMatrix) {
         }
         std::cout << std::endl;
     }
+
+    std::cout << std::endl;
 }
 
 
@@ -32,11 +34,9 @@ int main() {
     linearLayer1.forward(inputTensor);
     linearLayer1.output = relu(linearLayer1.output);
     linearLayer2.forward(linearLayer1.output);
-    linearLayer2.output = relu(linearLayer2.output);
+    linearLayer2.output = sigmoid(linearLayer2.output);
 
-    std::vector<std::vector<double>> output = sigmoid(linearLayer2.output);
-
-    printMatrixContent(output);
+    printMatrixContent(linearLayer2.output);
 
     return 0;
 }
