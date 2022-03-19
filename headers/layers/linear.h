@@ -26,4 +26,5 @@ public:
 
     void forward(std::vector<std::vector<double>> &inputTensor);
 
+    ~Linear();
 };
