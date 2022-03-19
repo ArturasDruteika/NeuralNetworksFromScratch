@@ -3,11 +3,12 @@
 #include <vector>
 
 
-class Linear {
+class Linear
+{
 private:
-    std::vector<std::vector<double>> dotProduct(std::vector<std::vector<double>> inputMatrix);
-
     static std::vector<std::vector<double>> transposeMatrix(std::vector<std::vector<double>> inputMatrix);
+
+    [[nodiscard]] std::vector<std::vector<double>> dotProduct(std::vector<std::vector<double>> inputMatrix) const;
 
     [[nodiscard]] std::vector<std::vector<double>> initializeWeights() const;
 

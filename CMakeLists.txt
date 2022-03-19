@@ -4,6 +4,7 @@ project(NeuralNetworksFromScratch)
 set(CMAKE_CXX_STANDARD 23)
 
 add_executable(neural_networks
+
         src/main.cpp
         headers/layers/conv2d.h
         headers/layers/linear.h
