@@ -1,9 +1,10 @@
-#include <vector>
 #include <iostream>
+#include <vector>
 
 #include "../headers/activations/relu.h"
 #include "../headers/activations/sigmoid.h"
 #include "../headers/layers/linear.h"
+#include "../headers/losses/mse.h"
 
 
 void printMatrixContent(std::vector<std::vector<double>> inputMatrix)
@@ -23,10 +24,10 @@ void printMatrixContent(std::vector<std::vector<double>> inputMatrix)
 
 int main()
 {
-    std::vector<int> labels = {0, 1, 0, 1};
-    std::vector<std::vector<double>> inputTensor = {{1, 3, 5, 8},
+    std::vector<double> labels = {0, 1, 0, 1};
+    std::vector<std::vector<double>> inputTensor = {{1,  3,  5,  8},
                                                     {-9, -6, -1, -4},
-                                                    {5, 6, 8, 2},
+                                                    {5,  6,  8,  2},
                                                     {-1, -2, -7, -2}};
 
     int inputShape = inputTensor[1].size();
@@ -41,6 +42,9 @@ int main()
     linearLayer2.output = sigmoid(linearLayer2.output);
 
     printMatrixContent(linearLayer2.output);
+    double loss = mseLoss(labels, linearLayer2.output);
+
+    std::cout << loss << std::endl;
 
     return 0;
 }
