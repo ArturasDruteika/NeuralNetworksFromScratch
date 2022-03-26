@@ -51,12 +51,6 @@ std::vector<double> Linear::initializeBiases() const
 
 }
 
-void Linear::forward(std::vector<std::vector<double>> &inputMatrix)
-{
-    this->output = this->dotProduct(inputMatrix);
-
-}
-
 std::vector<std::vector<double>> Linear::transposeMatrix(std::vector<std::vector<double>> matrixToTranspose)
 {
     std::vector<std::vector<double>> transposedMatrix;
@@ -77,32 +71,81 @@ std::vector<std::vector<double>> Linear::transposeMatrix(std::vector<std::vector
     return transposedMatrix;
 }
 
-std::vector<std::vector<double>> Linear::dotProduct(std::vector<std::vector<double>> inputMatrix) const
+std::vector<std::vector<double>> Linear::dotProduct(const std::vector<std::vector<double>> &firstMatrix,
+                                                    const std::vector<std::vector<double>> &secondMatrix)
 {
     std::vector<std::vector<double>> outputMatrix;
-    std::vector<std::vector<double>> transposedInputMatrix = transposeMatrix(inputMatrix);
+    std::vector<std::vector<double>> transposedSecondMatrix = transposeMatrix(secondMatrix);
 
-    for (int i = 0; i < this->weightsMatrix.size(); i++)
+    for (int i = 0; i < firstMatrix.size(); i++)
     {
         std::vector<double> rowVector;
-        rowVector.reserve(inputMatrix[0].size());
+        rowVector.reserve(secondMatrix[0].size());
 
-        for (int j = 0; j < transposedInputMatrix[0].size(); j++)
+        for (int j = 0; j < transposedSecondMatrix[0].size(); j++)
         {
             double result = 0;
 
-            for (int k = 0; k < this->weightsMatrix[0].size(); k++)
+            for (int k = 0; k < firstMatrix[0].size(); k++)
             {
-                result += this->weightsMatrix[i][k] * transposedInputMatrix[k][j];
+                result += firstMatrix[i][k] * transposedSecondMatrix[k][j];
             }
 
-            rowVector.push_back(result + this->biases[i]);
+            rowVector.push_back(result);
         }
 
         outputMatrix.push_back(rowVector);
     }
 
     return transposeMatrix(outputMatrix);
+}
+
+std::vector<std::vector<double>> Linear::addBias(std::vector<std::vector<double>> &inputMatrix)
+{
+    std::vector<std::vector<double>> outputMatrix;
+
+    for (int i = 0; i < inputMatrix.size(); i++)
+    {
+        std::vector<double> rowVector;
+        rowVector.reserve(inputMatrix[0].size());
+
+        for (int j = 0; j < inputMatrix[0].size(); j++)
+        {
+            rowVector.push_back(inputMatrix[i][j] + this->biases[i]);
+        }
+
+        outputMatrix.push_back(rowVector);
+    }
+
+    return outputMatrix;
+}
+
+void Linear::forward(std::vector<std::vector<double>> &inputMatrix)
+{
+    std::vector<std::vector<double>> outputMatrix = dotProduct(this->weightsMatrix, inputMatrix);
+    this->output = addBias(outputMatrix);
+}
+
+
+void Linear::backward(std::vector<std::vector<double>> &outputError, double learningRate) const
+{
+    std::vector<std::vector<double>> inputError;
+    std::vector<std::vector<double>> transposedWeightsMatrix = this->transposeMatrix(this->weightsMatrix);
+
+    for (int i = 0; i < transposedWeightsMatrix.size(); i++)
+    {
+        std::vector<double> rowMatrix;
+        rowMatrix.reserve(transposedWeightsMatrix[0].size());
+
+        for (int j = 0; j < transposedWeightsMatrix[0].size(); j++)
+        {
+            rowMatrix.push_back(outputError[i][0] * transposedWeightsMatrix[i][j]);
+        }
+
+        inputError.push_back(rowMatrix);
+    }
+
+
 }
 
 Linear::~Linear() = default;
