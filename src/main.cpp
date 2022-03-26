@@ -37,14 +37,14 @@ int main()
     Linear linearLayer2(outputNeurons, 1);
 
     linearLayer1.forward(inputTensor);
+
     linearLayer1.output = relu(linearLayer1.output);
     linearLayer2.forward(linearLayer1.output);
     linearLayer2.output = sigmoid(linearLayer2.output);
 
-    printMatrixContent(linearLayer2.output);
-    double loss = mseLoss(labels, linearLayer2.output);
+    std::vector<std::vector<double>> gradMatrix = msePrime(labels, linearLayer2.output);
 
-    std::cout << loss << std::endl;
+    printMatrixContent(gradMatrix);
 
     return 0;
 }
