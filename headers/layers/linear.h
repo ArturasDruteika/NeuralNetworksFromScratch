@@ -12,10 +12,11 @@ private:
 
     [[nodiscard]] std::vector<double> initializeBiases() const;
 
-//    [[nodiscard]] static std::vector<std::vector<double>> dotProduct(const std::vector<std::vector<double>> &firstMatrix,
-//                                                                     const std::vector<std::vector<double>> &secondMatrix);
-
     std::vector<std::vector<double>> addBias(std::vector<std::vector<double>> &inputMatrix);
+
+    void updateTrainableParameters(const std::vector<std::vector<double>> &weightsError,
+                                   const std::vector<std::vector<double>> &outputError,
+                                   double learningRate);
 
 
 public:
@@ -26,11 +27,13 @@ public:
 
     std::vector<std::vector<double>> weightsMatrix;
     std::vector<double> biases;
-    std::vector<std::vector<double>> output;
+    std::vector<std::vector<double>> outputMatrix;
 
     void forward(std::vector<std::vector<double>> &inputTensor);
 
-    void backward(std::vector<std::vector<double>> &outputError, double learningRate) const;
+    void backward(std::vector<std::vector<double>> &outputError,
+                  const std::vector<std::vector<double>> &inputMatrix,
+                  double learningRate);
 
     [[nodiscard]] static std::vector<std::vector<double>> dotProduct(const std::vector<std::vector<double>> &firstMatrix,
                                                                      const std::vector<std::vector<double>> &secondMatrix);

@@ -102,7 +102,7 @@ std::vector<std::vector<double>> Linear::dotProduct(const std::vector<std::vecto
 
 std::vector<std::vector<double>> Linear::addBias(std::vector<std::vector<double>> &inputMatrix)
 {
-    std::vector<std::vector<double>> outputMatrix;
+    std::vector<std::vector<double>> output;
 
     for (int i = 0; i < inputMatrix.size(); i++)
     {
@@ -114,36 +114,46 @@ std::vector<std::vector<double>> Linear::addBias(std::vector<std::vector<double>
             rowVector.push_back(inputMatrix[i][j] + this->biases[i]);
         }
 
-        outputMatrix.push_back(rowVector);
+        output.push_back(rowVector);
     }
 
-    return outputMatrix;
+    return output;
+}
+
+void Linear::updateTrainableParameters(const std::vector<std::vector<double>> &weightsError,
+                                       const std::vector<std::vector<double>> &outputError,
+                                       double learningRate)
+{
+    for (int i = 0; i < weightsError.size(); i++)
+    {
+        for (int j = 0; j < weightsError[0].size(); j++)
+        {
+            this->weightsMatrix[i][j] = this->weightsMatrix[i][j] - learningRate * weightsError[i][j];
+        }
+
+        this->biases[i] = this->biases[i] - learningRate * outputError[i][0];
+    }
 }
 
 void Linear::forward(std::vector<std::vector<double>> &inputMatrix)
 {
-    std::vector<std::vector<double>> outputMatrix = dotProduct(this->weightsMatrix, inputMatrix);
-    this->output = addBias(outputMatrix);
+    std::vector<std::vector<double>> output = dotProduct(this->weightsMatrix, inputMatrix);
+    this->outputMatrix = addBias(output);
 }
 
 
-void Linear::backward(std::vector<std::vector<double>> &outputError, double learningRate) const
+void Linear::backward(std::vector<std::vector<double>> &outputError,
+                      const std::vector<std::vector<double>> &inputMatrix,
+                      double learningRate)
 {
-    std::vector<std::vector<double>> inputError;
-    std::vector<std::vector<double>> transposedWeightsMatrix = this->transposeMatrix(this->weightsMatrix);
+    std::vector<std::vector<double>> inputError = dotProduct(outputError, this->weightsMatrix);
+    std::vector<std::vector<double>> transposedInputMatrix = transposeMatrix(inputMatrix);
 
-    for (int i = 0; i < transposedWeightsMatrix.size(); i++)
-    {
-        std::vector<double> rowMatrix;
-        rowMatrix.reserve(transposedWeightsMatrix[0].size());
+    outputError = transposeMatrix(outputError);
 
-        for (int j = 0; j < transposedWeightsMatrix[0].size(); j++)
-        {
-            rowMatrix.push_back(outputError[i][0] * transposedWeightsMatrix[i][j]);
-        }
+    std::vector<std::vector<double>> weightsError = dotProduct(transposedInputMatrix, outputError);
 
-        inputError.push_back(rowMatrix);
-    }
+    updateTrainableParameters(weightsError, outputError, learningRate);
 
 
 }
