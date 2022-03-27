@@ -25,26 +25,27 @@ void printMatrixContent(std::vector<std::vector<double>> inputMatrix)
 int main()
 {
     std::vector<double> labels = {0, 1, 0, 1};
-    std::vector<std::vector<double>> inputTensor = {{1,  3,  5,  8},
+    std::vector<std::vector<double>> inputMatrix = {{1,  3,  5,  8},
                                                     {-9, -6, -1, -4},
                                                     {5,  6,  8,  2},
-                                                    {-1, -2, -7, -2}};
+                                                    {-1, -2, -7, -2},
+                                                    {5,  10, 6,  4}};
 
-    int inputShape = inputTensor[1].size();
+    int inputShape = inputMatrix[1].size();
     int outputNeurons = 5;
 
     Linear linearLayer1(inputShape, outputNeurons);
     Linear linearLayer2(outputNeurons, 1);
 
-    linearLayer1.forward(inputTensor);
+    linearLayer1.forward(inputMatrix);
 
-    linearLayer1.output = relu(linearLayer1.output);
-    linearLayer2.forward(linearLayer1.output);
-    linearLayer2.output = sigmoid(linearLayer2.output);
+    linearLayer1.outputMatrix = relu(linearLayer1.outputMatrix);
+    linearLayer2.forward(linearLayer1.outputMatrix);
+    linearLayer2.outputMatrix = sigmoid(linearLayer2.outputMatrix);
 
-    std::vector<std::vector<double>> gradMatrix = msePrime(labels, linearLayer2.output);
+    std::vector<std::vector<double>> outputError = msePrime(labels, linearLayer2.outputMatrix);
 
-    printMatrixContent(gradMatrix);
+    linearLayer2.backward(outputError, inputMatrix, 0.01);
 
     return 0;
 }
